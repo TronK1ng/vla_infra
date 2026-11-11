@@ -1,0 +1,33 @@
+# Example policy configuration (v1).
+# The endpoint is the robot-side view of the policy server.  M1 defaults to a
+# loopback dummy server; production uses a VPN/TLS boundary, never a public
+# WebSocket port.
+schema_version: policy/v1
+endpoint: ws://127.0.0.1:8765
+timeout_s: 5.0
+connect_timeout_s: 3.0
+image_size: 224
+state_layout: canonical_v1
+
+# Declared by the checkpoint/adapter and enforced on handshake and per chunk.
+expected_horizon: 10
+expected_action_dt_s: 0.05
+expected_action_frame: base
+expected_action_type: delta_tcp
+# delta_tcp rows are cumulative: first row relative to measured TCP, then
+# each row relative to the previous commanded target (M1 only).
+expected_delta_semantics: cumulative
+
+# Name of the environment variable holding the bearer token, if any.
+# Never place the token itself in this file.
+# auth_token_env: VLA_POLICY_TOKEN
+
+# Explicit proxy policy: none (default), env (record the inherited env proxy),
+# or an explicit proxy URL.  Loopback endpoints always bypass the proxy.
+proxy: none
+
+server:
+  host: 127.0.0.1
+  port: 8765
+  adapter: zero          # zero | fixed | sine (M1 dummy adapters)
+  allow_non_loopback: false

@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vla-infra"
+version = "0.1.0"
+description = "Flexiv Rizon 4s VLA data-collection, remote-inference and safe local execution infrastructure"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+dependencies = [
+  "numpy>=1.24",
+  "PyYAML>=5.4",
+  "websockets>=14,<17",
+  "Pillow>=10",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=6.2",
+  "pytest-cov>=3",
+]
+m4 = [
+  "openpi-client==0.1.2",
+]
+
+[project.scripts]
+vla-doctor = "vla_infra.cli.doctor:main"
+vla-shadow = "vla_infra.cli.shadow:main"
+vla-record = "vla_infra.cli.record:main"
+vla-replay = "vla_infra.cli.replay:main"
+vla-m3 = "vla_infra.cli.m3:main"
+vla-rollout = "vla_infra.cli.rollout:main"
+vla-m5-readonly = "vla_infra.cli.m5_readonly:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -p no:anyio"  # station image: anyio plugin needs pytest>=7
+filterwarnings = [
+  "error::RuntimeWarning",
+]

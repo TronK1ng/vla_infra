@@ -1,0 +1,48 @@
+# Example safety profile (v1).  Every threshold is mandatory and deliberately
+# conservative for the first fake-backend runs.  Real values require on-site
+# measurement and leader approval; do not copy these into a production station
+# without review.
+schema_version: safety/v1
+
+workspace:                    # base frame, metres (AABB)
+  min: [-0.5, -0.5, 0.0]
+  max: [0.9, 0.5, 0.8]
+
+tcp_height:
+  min_m: 0.02
+  max_m: 0.75
+
+motion:
+  max_step_translation_m: 0.02
+  max_step_rotation_rad: 0.15
+  max_linear_velocity_m_s: 0.05
+  max_angular_velocity_rad_s: 0.25
+  max_linear_acceleration_m_s2: 5.0     # M3 full profile; reject, never clip
+  max_angular_acceleration_rad_s2: 1.0
+  max_first_target_translation_m: 0.03
+  max_first_target_rotation_rad: 0.2
+  min_segment_dt_ms: 1.0
+
+staleness:
+  max_observation_age_ms: 500
+  max_chunk_age_ms: 1000
+
+force:
+  max_force_n: 30.0
+  max_torque_nm: 5.0
+
+gripper:
+  width_min_m: 0.0
+  width_max_m: 0.1
+  max_speed_m_s: 0.1
+
+action:
+  allowed_frames: [base]
+  allowed_types: [delta_tcp]
+
+# Optional joint limits (rad, RDK joint order J1..J7).  Leave commented out
+# until the station's real limits have been verified; omit both or provide both.
+# joint_limits:
+#   min_rad: [-3.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0]
+#   max_rad: [ 3.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0]
+#   max_velocity_rad_s: [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]

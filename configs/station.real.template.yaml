@@ -1,0 +1,42 @@
+# M5 real-station template. All values are placeholders; never commit serials,
+# network addresses, calibration transforms or secrets. allow_real_motion is
+# false by default and still requires the runtime operator ACK + env gate.
+schema_version: m5-station/v1
+station_id: REPLACE_ME_STATION
+backend: real
+allow_real_motion: false
+
+# Approved tool identity; motion is blocked until ToolReadiness verifies these
+# hashes after an explicit Tool.Switch.
+tool_name: REPLACE_ME_TOOL_NAME
+tool_tcp_hash: REPLACE_ME_TCP_HASH
+tool_payload_hash: REPLACE_ME_PAYLOAD_HASH
+
+robot:
+  serial: REPLACE_ME_ROBOT_SERIAL
+  network_interface: REPLACE_ME_INTERFACE
+  rdk_version_min: 1.9.3
+  state_rate_hz: 500
+
+gn01:
+  name: REPLACE_ME_GN01_NAME
+  width_min_m: 0.0
+  width_max_m: 0.1
+  speed_m_s: 0.01
+  force_n: 2.0
+  dedup_width_m: 0.0001
+
+# Explicit base -> RDK world transform; placeholder identity must be replaced
+# and signed together with the calibration hash before field use.
+base_to_world:
+  - [1.0, 0.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0, 0.0]
+  - [0.0, 0.0, 1.0, 0.0]
+  - [0.0, 0.0, 0.0, 1.0]
+
+# Every command carries these explicit limits; RDK defaults are forbidden.
+nrt_limits:
+  max_linear_vel_m_s: 0.02
+  max_angular_vel_rad_s: 0.10
+  max_linear_acc_m_s2: 0.05
+  max_angular_acc_rad_s2: 0.10

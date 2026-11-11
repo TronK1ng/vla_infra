@@ -1,0 +1,44 @@
+# Example station configuration (v1).
+# All values are placeholders.  Never commit real serial numbers, IP addresses,
+# extrinsics, workspaces or secrets.  Secrets are referenced by environment
+# variable name only (see policy.example.yaml).
+schema_version: station/v1
+station_id: example-station
+# fake | real_readonly | real
+# real_readonly requires on_site_readonly_ack: true + VLA_INFRA_ALLOW_REAL_HARDWARE=1
+# and real serials; "real" (writer) remains M5 and is refused.
+backend: fake
+calibration_version: uncalibrated
+
+cameras:
+  base:
+    serial: REPLACE_ME_BASE_SERIAL
+    width: 640
+    height: 480
+    fps: 15
+    depth: true
+    device_latency_ms: 2.0
+  wrist:
+    serial: REPLACE_ME_WRIST_SERIAL
+    width: 640
+    height: 480
+    fps: 15
+    depth: true
+    device_latency_ms: 2.0
+
+robot:
+  serial: REPLACE_ME_ROBOT_SERIAL
+  state_rate_hz: 500
+  gripper: gn01
+
+sync:
+  max_sync_error_ms: 50
+  max_state_gap_ms: 100
+  max_camera_skew_ms: 50
+  wrench_policy: zoh
+  gripper_policy: zoh
+
+recording:
+  root: data/raw
+  min_free_gb: 20
+  finalize_timeout_s: 300   # drain/commit/fsync wait after stop; not a policy timeout
