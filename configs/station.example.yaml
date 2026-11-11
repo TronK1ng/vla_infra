@@ -12,6 +12,7 @@ calibration_version: uncalibrated
 
 cameras:
   base:
+    driver: realsense
     serial: REPLACE_ME_BASE_SERIAL
     width: 640
     height: 480
@@ -19,6 +20,7 @@ cameras:
     depth: true
     device_latency_ms: 2.0
   wrist:
+    driver: orbbec
     serial: REPLACE_ME_WRIST_SERIAL
     width: 640
     height: 480

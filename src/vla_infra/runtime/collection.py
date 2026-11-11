@@ -27,6 +27,7 @@ from ..contracts.policy_io import CANONICAL_STATE_LAYOUT
 from ..devices.fake import FakeCamera, FakeGripper, FakeRobotArm
 from ..devices.flexiv_rdk import FlexivRdkReadOnlyState
 from ..devices.realsense import RealSenseCamera
+from ..devices.orbbec import OrbbecCamera
 from ..errors import ConfigError, ErrorCode, SyncError, UnsupportedBackendError
 from ..recording.raw_writer import RawEpisodeWriter
 from ..recording.recorder import EpisodeRecorder, RecorderConfig, RecorderResult
@@ -64,6 +65,7 @@ def build_collection_metadata(
     cameras = {
         name: {
             "serial": camera.serial,
+            "driver": camera.driver,
             "width": camera.width,
             "height": camera.height,
             "fps": camera.fps,
@@ -129,7 +131,7 @@ def build_collection_metadata(
             "timestamp_sources": {
                 "host": "CLOCK_MONOTONIC via time.monotonic_ns",
                 "robot_device": "RDK RobotStates.timestamp [sec,nsec]",
-                "camera_device": "RealSense get_timestamp() milliseconds, preserved as ns",
+                "camera_device": "vendor hardware timestamp preserved as ns (RealSense ms / Orbbec us)",
             },
             "observation_rate_hz": min(camera.fps for camera in station.cameras.values()),
             "robot_state_rate_hz": station.robot.state_rate_hz,
@@ -288,7 +290,8 @@ class CollectionHarness:
     def _start_real_devices(self) -> None:
         station = self.app.station
         for name, camera in station.cameras.items():
-            device = RealSenseCamera(
+            camera_class = RealSenseCamera if camera.driver == "realsense" else OrbbecCamera
+            device = camera_class(
                 name,
                 camera.serial,
                 width=camera.width,
@@ -329,7 +332,7 @@ class CollectionHarness:
             {
                 "base_intrinsics_sha256": base.get("intrinsics_sha256"),
                 "wrist_intrinsics_sha256": wrist.get("intrinsics_sha256"),
-                "source": "realsense_intrinsics_only; extrinsics pending calibration",
+                "source": "camera_intrinsics_only; extrinsics pending calibration",
             }
         )
 

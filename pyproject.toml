@@ -24,6 +24,9 @@ dev = [
 m4 = [
   "openpi-client==0.1.2",
 ]
+orbbec = [
+  "pyorbbecsdk2==2.1.3",
+]
 
 [project.scripts]
 vla-doctor = "vla_infra.cli.doctor:main"

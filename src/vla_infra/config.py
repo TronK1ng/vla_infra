@@ -93,6 +93,7 @@ class CameraConfig:
     width: int
     height: int
     fps: float
+    driver: str = "realsense"
     depth: bool = False
     device_latency_ms: float = 2.0
 
@@ -229,12 +230,13 @@ def load_station(path: str | Path) -> StationConfig:
         _expect_keys(
             camera_raw,
             required=("serial", "width", "height", "fps"),
-            optional=("depth", "device_latency_ms"),
+            optional=("driver", "depth", "device_latency_ms"),
             context=f"station.cameras.{name}",
         )
         cameras[name] = CameraConfig(
             name=name,
             serial=_require_str(camera_raw["serial"], f"camera.{name}.serial"),
+            driver=_require_str(camera_raw.get("driver", "realsense"), f"camera.{name}.driver"),
             width=_require_positive_int(camera_raw["width"], f"camera.{name}.width"),
             height=_require_positive_int(camera_raw["height"], f"camera.{name}.height"),
             fps=_require_positive_float(camera_raw["fps"], f"camera.{name}.fps"),
@@ -243,6 +245,12 @@ def load_station(path: str | Path) -> StationConfig:
                 camera_raw.get("device_latency_ms", 2.0), f"camera.{name}.device_latency_ms"
             ),
         )
+        if cameras[name].driver not in ("realsense", "orbbec"):
+            raise _fail(
+                "camera driver must be 'realsense' or 'orbbec'",
+                camera=name,
+                actual=cameras[name].driver,
+            )
     serials = [camera.serial for camera in cameras.values()]
     if len(set(serials)) != len(serials):
         raise _fail("camera serials must be unique (no binding by enumeration order)")

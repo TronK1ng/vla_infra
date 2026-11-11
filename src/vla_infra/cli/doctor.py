@@ -85,6 +85,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                     "height": camera.height,
                     "fps": camera.fps,
                     "depth": camera.depth,
+                    "driver": camera.driver,
                     "serial_configured": bool(camera.serial and "REPLACE_ME" not in camera.serial),
                 }
                 for name, camera in app.station.cameras.items()
@@ -104,6 +105,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         },
         "sdks": {
             "pyrealsense2": importlib.util.find_spec("pyrealsense2") is not None,
+            "pyorbbecsdk": importlib.util.find_spec("pyorbbecsdk") is not None,
             "flexivrdk": importlib.util.find_spec("flexivrdk") is not None,
         },
         "sync": {
@@ -156,7 +158,12 @@ def main(argv: Optional[list[str]] = None) -> int:
                 f"disk free {disk.free} < required {min_free_bytes} bytes"
             )
         if app.station.backend == "real_readonly":
-            for sdk_name in ("pyrealsense2", "flexivrdk"):
+            required_sdks = {"flexivrdk"}
+            required_sdks.update(
+                "pyrealsense2" if camera.driver == "realsense" else "pyorbbecsdk"
+                for camera in app.station.cameras.values()
+            )
+            for sdk_name in sorted(required_sdks):
                 if not report["sdks"][sdk_name]:
                     problems.append(f"{sdk_name} is not importable")
         if problems:
@@ -177,7 +184,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"station: {app.station.station_id} backend={app.station.backend}")
     for name, camera in app.station.cameras.items():
         serial_state = "configured" if report["station"]["cameras"][name]["serial_configured"] else "PLACEHOLDER"
-        print(f"  camera {name}: {camera.width}x{camera.height}@{camera.fps} depth={camera.depth} serial={serial_state}")
+        print(f"  camera {name}: driver={camera.driver} {camera.width}x{camera.height}@{camera.fps} depth={camera.depth} serial={serial_state}")
     print(f"  robot serial: {'configured' if report['station']['robot_serial_configured'] else 'PLACEHOLDER'}")
     print(
         "safety: workspace "

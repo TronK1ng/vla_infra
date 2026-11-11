@@ -28,6 +28,8 @@ Flexiv Rizon 4s 的 VLA 基础设施：本地工控机连接机械臂、GN01 与
 - 现场操作员、可触达急停、清空的工作区；
 - 数据盘必须是最终用于录制的数据盘；
 - Flexiv RDK Python 1.9.3。RealSense 采集阶段还需要 `pyrealsense2`；
+- Gemini 336L 使用 Orbbec SDK v2（Python 包 `pyorbbecsdk2`，导入名
+  `pyorbbecsdk`），相机必须连接 USB 3.x；
 - ROS2 **不是本项目的必要依赖**。不要同时启动 ROS2 writer、Flexiv 示例程序或其他 RDK 控制进程。
 
 ## 从 GitHub 安装
@@ -63,6 +65,35 @@ OpenPI 官方客户端可选安装：
 
 ```bash
 python -m pip install -e '.[m4]'
+```
+
+Gemini 336L SDK 可选安装：
+
+```bash
+python -m pip install -e '.[orbbec]'
+# Linux 首次安装还需按 Orbbec 官方脚本安装 udev 规则：
+python "$(python -c 'import pyorbbecsdk, os; print(os.path.dirname(pyorbbecsdk.__file__))')/shared/setup_env.py"
+```
+
+站点配置为每台相机显式声明驱动；未声明时为兼容旧配置默认使用
+`realsense`：
+
+```yaml
+cameras:
+  base:
+    driver: realsense
+    serial: REPLACE_ME_D415_SERIAL
+    width: 640
+    height: 480
+    fps: 15
+    depth: true
+  wrist:
+    driver: orbbec
+    serial: REPLACE_ME_GEMINI_SERIAL
+    width: 640
+    height: 480
+    fps: 15
+    depth: true
 ```
 
 Force Policy 不是只读部署依赖，也不随本仓库发布。需要研究其数据格式或部署方法时，应单独克隆上游仓库并固定 commit：

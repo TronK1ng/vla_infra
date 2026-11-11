@@ -22,6 +22,7 @@ from .interfaces import (
     SingleWriterGuard,
 )
 from .realsense import CameraIntrinsics, RealSenseCamera
+from .orbbec import OrbbecCamera
 
 __all__ = [
     "CameraFramePair",
@@ -38,6 +39,7 @@ __all__ = [
     "Gn01CommandSink",
     "Gn01Config",
     "NrtLimits",
+    "OrbbecCamera",
     "FlexivRdkSession",
     "RealRobotCommandSink",
     "RealSenseCamera",

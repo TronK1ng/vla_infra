@@ -26,7 +26,9 @@ PYTHONPATH=src python3 -m vla_infra.cli.doctor --preflight --json
 Check:
 
 - recording root free space >= `recording.min_free_gb`;
-- `pyrealsense2`/`flexivrdk` importable;
+- 相机配置为 `driver: realsense` 时 `pyrealsense2` 可导入，配置为
+  `driver: orbbec` 时 `pyorbbecsdk` 可导入；`flexivrdk` 可导入；
+- Gemini 336L 已安装 Orbbec udev 规则并连接 USB 3.x；USB 2.x 必须拒绝；
 - serials and calibration version/hash present;
 - `recording.finalize_timeout_s` is long enough for the station disk (default
   300 s).
