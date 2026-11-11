@@ -86,7 +86,8 @@ cameras:
     width: 640
     height: 480
     fps: 15
-    depth: true
+    depth: false
+    require_usb3: false
   wrist:
     driver: orbbec
     serial: REPLACE_ME_GEMINI_SERIAL
@@ -94,7 +95,12 @@ cameras:
     height: 480
     fps: 15
     depth: true
+    require_usb3: true
 ```
+
+`require_usb3: false` 仅用于低带宽、实测通过的 color-only 相机。Gemini
+336L 的 RGB-D 配置必须保持 `require_usb3: true`。旧配置未声明该字段时
+默认仍要求 USB 3.x。
 
 Force Policy 不是只读部署依赖，也不随本仓库发布。需要研究其数据格式或部署方法时，应单独克隆上游仓库并固定 commit：
 

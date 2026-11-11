@@ -41,6 +41,19 @@ def test_example_configs_load() -> None:
     assert app.policy.expected_delta_semantics == "cumulative"
     assert app.safety.max_force_n == 30.0
     assert app.station.sync.max_sync_error_ns == 50_000_000
+    assert app.station.cameras["base"].depth is False
+    assert app.station.cameras["base"].require_usb3 is False
+    assert app.station.cameras["wrist"].depth is True
+    assert app.station.cameras["wrist"].require_usb3 is True
+
+
+@pytest.mark.parametrize("field", ["depth", "require_usb3"])
+def test_camera_boolean_fields_are_strict(tmp_path: Path, field: str) -> None:
+    raw = _mapping(STATION)
+    raw["cameras"]["base"][field] = "false"
+    with pytest.raises(ConfigError) as exc:
+        load_station(_write(tmp_path, "station.yaml", raw))
+    assert "boolean" in exc.value.message
 
 
 def test_missing_file_fails_closed() -> None:

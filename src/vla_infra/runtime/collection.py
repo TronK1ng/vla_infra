@@ -70,6 +70,7 @@ def build_collection_metadata(
             "height": camera.height,
             "fps": camera.fps,
             "depth": camera.depth,
+            "require_usb3": camera.require_usb3,
             "device_latency_ms": camera.device_latency_ms,
         }
         for name, camera in station.cameras.items()
@@ -299,6 +300,7 @@ class CollectionHarness:
                 fps=camera.fps,
                 enable_depth=camera.depth,
                 clock=self._clock,
+                require_usb3=camera.require_usb3,
             )
             device.start()
             self._cameras[name] = {"real": device}

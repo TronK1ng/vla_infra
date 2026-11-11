@@ -72,7 +72,8 @@ def test_fake_collection_records_valid_episode(recorded_episode: Path) -> None:
     assert (recorded_episode / "sync" / "sync_report.json").exists()
     assert (recorded_episode / "lowdim" / "schema.json").exists()
     assert (recorded_episode / "cameras" / "base" / "color" / "frames.jsonl").exists()
-    assert (recorded_episode / "cameras" / "base" / "depth" / "frames.jsonl").exists()
+    assert not (recorded_episode / "cameras" / "base" / "depth" / "frames.jsonl").exists()
+    assert (recorded_episode / "cameras" / "wrist" / "depth" / "frames.jsonl").exists()
     assert validate_episode(recorded_episode) == []
 
 

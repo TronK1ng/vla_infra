@@ -82,6 +82,12 @@ def _require_positive_int(value: Any, context: str) -> int:
     return int(value)
 
 
+def _require_bool(value: Any, context: str) -> bool:
+    if not isinstance(value, bool):
+        raise _fail("expected a boolean", context=context, value=value)
+    return value
+
+
 def _ms_to_ns(value: Any, context: str) -> int:
     return int(round(_require_positive_float(value, context) * 1_000_000))
 
@@ -95,6 +101,7 @@ class CameraConfig:
     fps: float
     driver: str = "realsense"
     depth: bool = False
+    require_usb3: bool = True
     device_latency_ms: float = 2.0
 
 
@@ -230,7 +237,7 @@ def load_station(path: str | Path) -> StationConfig:
         _expect_keys(
             camera_raw,
             required=("serial", "width", "height", "fps"),
-            optional=("driver", "depth", "device_latency_ms"),
+            optional=("driver", "depth", "require_usb3", "device_latency_ms"),
             context=f"station.cameras.{name}",
         )
         cameras[name] = CameraConfig(
@@ -240,7 +247,10 @@ def load_station(path: str | Path) -> StationConfig:
             width=_require_positive_int(camera_raw["width"], f"camera.{name}.width"),
             height=_require_positive_int(camera_raw["height"], f"camera.{name}.height"),
             fps=_require_positive_float(camera_raw["fps"], f"camera.{name}.fps"),
-            depth=bool(camera_raw.get("depth", False)),
+            depth=_require_bool(camera_raw.get("depth", False), f"camera.{name}.depth"),
+            require_usb3=_require_bool(
+                camera_raw.get("require_usb3", True), f"camera.{name}.require_usb3"
+            ),
             device_latency_ms=_require_positive_float(
                 camera_raw.get("device_latency_ms", 2.0), f"camera.{name}.device_latency_ms"
             ),

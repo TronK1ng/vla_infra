@@ -17,7 +17,8 @@ cameras:
     width: 640
     height: 480
     fps: 15
-    depth: true
+    depth: false
+    require_usb3: false
     device_latency_ms: 2.0
   wrist:
     driver: orbbec
@@ -26,6 +27,7 @@ cameras:
     height: 480
     fps: 15
     depth: true
+    require_usb3: true
     device_latency_ms: 2.0
 
 robot:

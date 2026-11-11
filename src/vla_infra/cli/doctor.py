@@ -86,6 +86,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                     "fps": camera.fps,
                     "depth": camera.depth,
                     "driver": camera.driver,
+                    "require_usb3": camera.require_usb3,
                     "serial_configured": bool(camera.serial and "REPLACE_ME" not in camera.serial),
                 }
                 for name, camera in app.station.cameras.items()
@@ -184,7 +185,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"station: {app.station.station_id} backend={app.station.backend}")
     for name, camera in app.station.cameras.items():
         serial_state = "configured" if report["station"]["cameras"][name]["serial_configured"] else "PLACEHOLDER"
-        print(f"  camera {name}: driver={camera.driver} {camera.width}x{camera.height}@{camera.fps} depth={camera.depth} serial={serial_state}")
+        print(
+            f"  camera {name}: driver={camera.driver} {camera.width}x{camera.height}@{camera.fps} "
+            f"depth={camera.depth} require_usb3={camera.require_usb3} serial={serial_state}"
+        )
     print(f"  robot serial: {'configured' if report['station']['robot_serial_configured'] else 'PLACEHOLDER'}")
     print(
         "safety: workspace "
